@@ -9,6 +9,35 @@ export const useWorkoutStore = create((set, get) => ({
 	// PR del ejercicio (peso máximo histórico)
 	pr: null,
 	loading: false,
+	tips: [],
+	tipsLoading: false,
+
+	fetchTips: async (exerciseId, exerciseName, muscleGroup) => {
+		set({ tipsLoading: true, tips: [] });
+
+		// ✅ Obtén el token de sesión del usuario
+		const {
+			data: { session },
+		} = await supabase.auth.getSession();
+
+		const { data, error } = await supabase.functions.invoke(
+			'generate-tips',
+			{
+				body: { exerciseId, exerciseName, muscleGroup },
+				headers: {
+					Authorization: `Bearer ${session?.access_token}`,
+				},
+			},
+		);
+
+		console.log('Edge function response:', { data, error });
+
+		if (!error && data?.tips) {
+			set({ tips: data.tips });
+		}
+
+		set({ tipsLoading: false });
+	},
 
 	// Carga el log de hoy + historial + PR de un ejercicio
 	fetchExerciseData: async (exerciseId) => {

@@ -7,8 +7,16 @@ export default function WorkoutPage() {
 	const { exerciseId } = useParams();
 	const navigate = useNavigate();
 
-	const { todayLog, history, pr, fetchExerciseData, saveLog } =
-		useWorkoutStore();
+	const {
+		todayLog,
+		history,
+		pr,
+		fetchExerciseData,
+		saveLog,
+		tips,
+		tipsLoading,
+		fetchTips,
+	} = useWorkoutStore();
 	const { exercises, fetchExercises } = useExerciseStore();
 
 	const exercise = exercises.find((e) => e.id === exerciseId);
@@ -24,6 +32,13 @@ export default function WorkoutPage() {
 		fetchExerciseData(exerciseId);
 		if (exercises.length === 0) fetchExercises();
 	}, [exerciseId, exercises.length, fetchExerciseData, fetchExercises]);
+
+	// Nuevo useEffect — espera a tener el ejercicio cargado
+	useEffect(() => {
+		if (exercise) {
+			fetchTips(exercise.id, exercise.name, exercise.muscle_group);
+		}
+	}, [exercise?.id]);
 
 	// Cuando carga el log de hoy, rellena los sets y notas
 	useEffect(() => {
@@ -113,6 +128,41 @@ export default function WorkoutPage() {
 							{pr ? `${pr} kg` : '—'}
 						</p>
 					</div>
+					{/* Tips de ejecución */}
+					<section className='flex flex-col gap-3'>
+						<p className='text-xs font-semibold text-gray-400 uppercase tracking-widest'>
+							Tips de ejecución
+						</p>
+
+						{tipsLoading ? (
+							<div className='flex items-center gap-2 py-2'>
+								<div className='w-3 h-3 rounded-full bg-gray-300 animate-pulse' />
+								<p className='text-sm text-gray-400'>
+									Generando tips con IA...
+								</p>
+							</div>
+						) : tips.length === 0 ? (
+							<p className='text-sm text-gray-300'>
+								No hay tips disponibles
+							</p>
+						) : (
+							<ul className='flex flex-col gap-2'>
+								{tips.map((tip, index) => (
+									<li
+										key={index}
+										className='flex items-start gap-3'
+									>
+										<span className='mt-0.5 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 text-xs font-semibold text-gray-500'>
+											{index + 1}
+										</span>
+										<p className='text-sm text-gray-600 leading-relaxed'>
+											{tip}
+										</p>
+									</li>
+								))}
+							</ul>
+						)}
+					</section>
 
 					{/* Series de hoy */}
 					<section className='flex flex-col gap-3'>
