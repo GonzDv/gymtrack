@@ -145,9 +145,13 @@ export default function RoutinePage() {
 								<div
 									key={item.id}
 									className={`
-                    flex items-center justify-between py-4
-                    ${index !== dayExercises.length - 1 ? 'border-b border-gray-100' : ''}
-                  `}
+										flex items-center justify-between py-4 cursor-pointer
+										${index !== dayExercises.length - 1 ? 'border-b border-gray-100' : ''}`}
+									onClick={() =>
+										navigate(
+											`/workout/${item.exercise_id}`,
+										)
+									}
 								>
 									<div>
 										<p className='text-sm font-bold text-gray-900'>

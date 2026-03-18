@@ -5,7 +5,7 @@ import AuthPage from './pages/Auth/AuthPage';
 import HomePage from './pages/Home/HomePage';
 import LibraryPage from './pages/ExLibrary/ExLibraryPage';
 import RoutinePage from './pages/Routine/RoutinePage';
-
+import WorkoutPage from './pages/Workout/WorkoutPage';
 export default function App() {
 	const { session, loading, initialize } = useAuthStore();
 
@@ -48,6 +48,16 @@ export default function App() {
 				element={
 					session ? (
 						<RoutinePage />
+					) : (
+						<Navigate to='/auth' />
+					)
+				}
+			/>
+			<Route
+				path='/workout/:exerciseId'
+				element={
+					session ? (
+						<WorkoutPage />
 					) : (
 						<Navigate to='/auth' />
 					)
