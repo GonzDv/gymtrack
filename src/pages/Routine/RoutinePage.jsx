@@ -6,7 +6,7 @@ import {
 	DAY_SHORT,
 } from '../../store/routineStore';
 import { useExerciseStore } from '../../store/exerciseStore';
-import BottomNav from '../../components/Navigation/bottomNav';
+import BottomNav from '../../components/bottomNav';
 
 export default function RoutinePage() {
 	const navigate = useNavigate();

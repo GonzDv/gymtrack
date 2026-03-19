@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import { useRoutineStore, DAY_NAMES, DAY_SHORT } from '../../store/routineStore'
 import { useAttendanceStore } from '../../store/attendanceStore'
-import BottomNav from '../../components/Navigation/BottomNav'
+import BottomNav from '../../components/bottomNav'
 
 function getInitials(user) {
   const name = user?.user_metadata?.name

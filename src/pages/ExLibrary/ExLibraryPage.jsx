@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useExerciseStore } from '../../store/exerciseStore';
-import BottomNav from '../../components/Navigation/bottomNav';
+import BottomNav from '../../components/bottomNav';
 
 export default function LibraryPage() {
 	const navigate = useNavigate();
