@@ -60,7 +60,7 @@ const NAV_ITEMS = [
 	},
 	{
 		label: 'Perfil',
-		path: '/perfil',
+		path: '/profile',
 		icon: (active) => (
 			<svg
 				className={`w-5 h-5 ${active ? 'text-gray-900' : 'text-gray-400'}`}

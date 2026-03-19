@@ -7,6 +7,7 @@ import HomePage from './pages/Home/HomePage'
 import LibraryPage from './pages/ExLibrary/ExLibraryPage'
 import RoutinePage from './pages/Routine/RoutinePage'
 import WorkoutPage from './pages/Workout/WorkoutPage'
+import ProfilePage from './pages/Profile/ProfilePage'
 
 export default function App() {
   const { session, loading, initialize } = useAuthStore()
@@ -46,6 +47,10 @@ export default function App() {
         <Route
           path='/workout/:exerciseId'
           element={session ? <WorkoutPage /> : <Navigate to='/auth' />}
+        />
+        <Route
+          path='/profile'
+          element={session ? <ProfilePage /> : <Navigate to='/auth' />}
         />
       </Routes>
       <InstallBanner />

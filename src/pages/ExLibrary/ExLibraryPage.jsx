@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useExerciseStore } from '../../store/exerciseStore';
 import BottomNav from '../../components/bottomNav';
+import { useRoutineStore, DAY_NAMES } from '../../store/routineStore'
 
 export default function LibraryPage() {
 	const navigate = useNavigate();
@@ -15,6 +16,12 @@ export default function LibraryPage() {
 		setActiveFilter,
 		getFilteredExercises,
 	} = useExerciseStore();
+
+	const [selectedExercise, setSelectedExercise] = useState(null)
+	const [addingDay, setAddingDay] = useState(null)
+	const [dayFeedback, setDayFeedback] = useState('')
+
+	const { addToRoutine } = useRoutineStore()
 
 	const [showNewForm, setShowNewForm] = useState(false);
 	const [newName, setNewName] = useState('');
@@ -201,23 +208,71 @@ export default function LibraryPage() {
                     ${index !== filtered.length - 1 ? 'border-b border-gray-100' : ''}
                   `}
 								>
-									<div>
+									<div className='flex flex-col justify-center items-start gap-3'>
 										<p className='text-sm font-semibold text-gray-900'>
 											{
 												exercise.name
 											}
 										</p>
-									</div>
-									<div className='flex items-center gap-3'>
-										<span className='text-xs font-medium text-gray-400 uppercase tracking-wide'>
+										<p className='text-xs font-medium text-gray-400 uppercase tracking-wide'>
 											{
 												exercise.muscle_group
 											}
-										</span>
-										<button className='w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center hover:bg-gray-700 transition'>
-											<span className='text-white text-lg leading-none'>
-												+
-											</span>
+										</p>
+									</div>
+									<div className='flex flex-col justify-center items-center gap-3'>
+										{selectedExercise?.id === exercise.id && (
+											<div className='pb-3 flex flex-col justify-center items-center gap-2'>
+												<p className='text-xs text-gray-400'>Agregar a:</p>
+												<div className='flex flex-wrap gap-2'>
+													{DAY_NAMES.map((day, index) => (
+														<button
+															key={day}
+															disabled={addingDay === index}
+															onClick={async () => {
+																setAddingDay(index)
+																const { error } = await addToRoutine(exercise.id, index)
+																setAddingDay(null)
+																if (error) {
+																	setDayFeedback(error.message)
+																} else {
+																	setDayFeedback(`✓ Agregado al ${day}`)
+																	setTimeout(() => {
+																		setSelectedExercise(null)
+																		setDayFeedback('')
+																	}, 1500)
+																}
+															}}
+															className={`
+																px-3 py-1.5 rounded-full text-xs font-medium transition
+																${addingDay === index
+																	? 'bg-gray-200 text-gray-400'
+																	: 'bg-gray-100 text-gray-700 hover:bg-gray-900 hover:text-white'
+																}
+															`}
+														>
+															{addingDay === index ? '...' : day}
+														</button>
+													))}
+												</div>
+												{dayFeedback && (
+													<p className={`text-xs ${dayFeedback.startsWith('✓') ? 'text-green-500' : 'text-red-400'}`}>
+														{dayFeedback}
+													</p>
+												)}
+											</div>
+										)}
+										<button
+											onClick={(e) => {
+												e.stopPropagation()
+												setSelectedExercise(
+													selectedExercise?.id === exercise.id ? null : exercise
+												)
+												setDayFeedback('')
+											}}
+											className='w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center hover:bg-gray-700 transition flex-shrink-0'
+										>
+											<span className='text-white text-lg leading-none'>+</span>
 										</button>
 									</div>
 								</div>
