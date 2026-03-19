@@ -1,68 +1,54 @@
-import { useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './store/authStore';
-import AuthPage from './pages/Auth/AuthPage';
-import HomePage from './pages/Home/HomePage';
-import LibraryPage from './pages/ExLibrary/ExLibraryPage';
-import RoutinePage from './pages/Routine/RoutinePage';
-import WorkoutPage from './pages/Workout/WorkoutPage';
+import { useEffect } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { useAuthStore } from './store/authStore'
+import InstallBanner from './components/InstallBaner'
+import AuthPage from './pages/Auth/AuthPage'
+import HomePage from './pages/Home/HomePage'
+import LibraryPage from './pages/ExLibrary/ExLibraryPage'
+import RoutinePage from './pages/Routine/RoutinePage'
+import WorkoutPage from './pages/Workout/WorkoutPage'
+
 export default function App() {
-	const { session, loading, initialize } = useAuthStore();
+  const { session, loading, initialize } = useAuthStore()
 
-	useEffect(() => {
-		initialize();
-	}, []);
+  useEffect(() => {
+    initialize()
+  }, [])
 
-	if (loading) {
-		return (
-			<div className='flex h-screen items-center justify-center'>
-				<p className='text-gray-400 text-sm'>Cargando...</p>
-			</div>
-		);
-	}
+  if (loading) {
+    return (
+      <div className='flex h-screen items-center justify-center'>
+        <p className='text-gray-400 text-sm'>Cargando...</p>
+      </div>
+    )
+  }
 
-	return (
-		<Routes>
-			<Route
-				path='/auth'
-				element={!session ? <AuthPage /> : <Navigate to='/' />}
-			/>
-			<Route
-				path='/*'
-				element={
-					session ? <HomePage /> : <Navigate to='/auth' />
-				}
-			/>
-			<Route
-				path='/biblioteca'
-				element={
-					session ? (
-						<LibraryPage />
-					) : (
-						<Navigate to='/auth' />
-					)
-				}
-			/>
-			<Route
-				path='/rutina'
-				element={
-					session ? (
-						<RoutinePage />
-					) : (
-						<Navigate to='/auth' />
-					)
-				}
-			/>
-			<Route
-				path='/workout/:exerciseId'
-				element={
-					session ? (
-						<WorkoutPage />
-					) : (
-						<Navigate to='/auth' />
-					)
-				}
-			/>
-		</Routes>
-	);
+  return (
+    // ✅ Fragment envuelve Routes + InstallBanner
+    <>
+      <Routes>
+        <Route
+          path='/auth'
+          element={!session ? <AuthPage /> : <Navigate to='/' />}
+        />
+        <Route
+          path='/*'
+          element={session ? <HomePage /> : <Navigate to='/auth' />}
+        />
+        <Route
+          path='/biblioteca'
+          element={session ? <LibraryPage /> : <Navigate to='/auth' />}
+        />
+        <Route
+          path='/rutina'
+          element={session ? <RoutinePage /> : <Navigate to='/auth' />}
+        />
+        <Route
+          path='/workout/:exerciseId'
+          element={session ? <WorkoutPage /> : <Navigate to='/auth' />}
+        />
+      </Routes>
+      <InstallBanner />
+    </>
+  )
 }

@@ -2,8 +2,10 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWorkoutStore } from '../../store/workoutStore';
 import { useExerciseStore } from '../../store/exerciseStore';
+import { useAttendanceStore } from '../../store/attendanceStore'
 
 export default function WorkoutPage() {
+	const { fetchAttendance } = useAttendanceStore()
 	const { exerciseId } = useParams();
 	const navigate = useNavigate();
 
@@ -85,16 +87,14 @@ export default function WorkoutPage() {
 		handleSave(sets, notes);
 	};
 
-	const handleSave = useCallback(
-		async (currentSets, currentNotes) => {
-			setSaving(true);
-			await saveLog(exerciseId, currentSets, currentNotes);
-			setSaving(false);
-			setSavedFeedback(true);
-			setTimeout(() => setSavedFeedback(false), 2000);
-		},
-		[exerciseId, saveLog],
-	);
+	const handleSave = useCallback(async (currentSets, currentNotes) => {
+  	setSaving(true)
+  	await saveLog(exerciseId, currentSets, currentNotes)
+  	await fetchAttendance()
+  	setSaving(false)
+  	setSavedFeedback(true)
+  	setTimeout(() => setSavedFeedback(false), 2000)
+}, [exerciseId, saveLog, fetchAttendance]);
 
 	return (
 		<div className='min-h-screen bg-white md:bg-gray-50'>

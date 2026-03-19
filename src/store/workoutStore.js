@@ -30,8 +30,6 @@ export const useWorkoutStore = create((set, get) => ({
 			},
 		);
 
-		console.log('Edge function response:', { data, error });
-
 		if (!error && data?.tips) {
 			set({ tips: data.tips });
 		}
