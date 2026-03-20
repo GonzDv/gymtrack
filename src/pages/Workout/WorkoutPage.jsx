@@ -2,10 +2,10 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWorkoutStore } from '../../store/workoutStore';
 import { useExerciseStore } from '../../store/exerciseStore';
-import { useAttendanceStore } from '../../store/attendanceStore'
+import { useAttendanceStore } from '../../store/attendanceStore';
 
 export default function WorkoutPage() {
-	const { fetchAttendance } = useAttendanceStore()
+	const { fetchAttendance } = useAttendanceStore();
 	const { exerciseId } = useParams();
 	const navigate = useNavigate();
 
@@ -29,6 +29,19 @@ export default function WorkoutPage() {
 	const [newReps, setNewReps] = useState('');
 	const [saving, setSaving] = useState(false);
 	const [savedFeedback, setSavedFeedback] = useState(false);
+
+	const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+	useEffect(() => {
+		const handleOnline = () => setIsOnline(true);
+		const handleOffline = () => setIsOnline(false);
+		window.addEventListener('online', handleOnline);
+		window.addEventListener('offline', handleOffline);
+		return () => {
+			window.removeEventListener('online', handleOnline);
+			window.removeEventListener('offline', handleOffline);
+		};
+	}, []);
 
 	useEffect(() => {
 		fetchExerciseData(exerciseId);
@@ -87,14 +100,17 @@ export default function WorkoutPage() {
 		handleSave(sets, notes);
 	};
 
-	const handleSave = useCallback(async (currentSets, currentNotes) => {
-  	setSaving(true)
-  	await saveLog(exerciseId, currentSets, currentNotes)
-  	await fetchAttendance()
-  	setSaving(false)
-  	setSavedFeedback(true)
-  	setTimeout(() => setSavedFeedback(false), 2000)
-}, [exerciseId, saveLog, fetchAttendance]);
+	const handleSave = useCallback(
+		async (currentSets, currentNotes) => {
+			setSaving(true);
+			await saveLog(exerciseId, currentSets, currentNotes);
+			await fetchAttendance();
+			setSaving(false);
+			setSavedFeedback(true);
+			setTimeout(() => setSavedFeedback(false), 2000);
+		},
+		[exerciseId, saveLog, fetchAttendance],
+	);
 
 	return (
 		<div className='min-h-screen bg-white md:bg-gray-50'>
@@ -178,6 +194,12 @@ export default function WorkoutPage() {
 							{savedFeedback && !saving && (
 								<p className='text-xs text-green-500'>
 									Guardado ✓
+								</p>
+							)}
+							{!isOnline && (
+								<p className='text-xs text-amber-500'>
+									⚡ Sin conexión — guardado
+									local
 								</p>
 							)}
 						</div>
